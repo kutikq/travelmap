@@ -12,14 +12,13 @@ from functools import partial
 from http.server import SimpleHTTPRequestHandler, HTTPServer
 import threading
 from PySide6.QtCore import Qt
-from dialog_achievements import Ui_DialogAchievements  # Импортируйте ваш класс
+from dialog_achievements import Ui_DialogAchievements  
 
 class TravelApp(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Интерактивная карта путешествий")
         self.setGeometry(100, 100, 1000, 800)
-
         self.visited_places = set()
         self.total_places = 20
         self.dark_mode = False
