@@ -11,6 +11,7 @@ from PySide6.QtGui import QFont, QPixmap
 from functools import partial
 from http.server import SimpleHTTPRequestHandler, HTTPServer
 import threading
+from PySide6.QtCore import Qt
 
 class TravelApp(QMainWindow):
     def __init__(self):
@@ -303,6 +304,19 @@ class TravelApp(QMainWindow):
                 self.reward_image_label.setLayout(achievement_layout)
         else:
             self.reward_label.setText("Нет достижений.")
+
+        # Проверяем, достиг ли пользователь 10 посещенных мест
+        if len(self.visited_places) == 10:
+            self.challenge_label.setText("Поздравляем! Вы получили промокод на скидку 10% 🎉")
+
+        # Отображение PNG для достижения "Исследователь"
+        reward_image_path = rewards.get("Исследователь: Посетите 10 мест.", "reward_placeholder.png")
+        if os.path.exists(reward_image_path):
+            self.reward_image_label.setPixmap(QPixmap(reward_image_path).scaled(200, 200))  # Отобразить картинку
+            self.reward_image_label.setAlignment(Qt.AlignCenter)
+        elif len(self.visited_places) < 10:
+            self.challenge_label.setText("Челлендж: Посетите 10 мест, чтобы получить промокод!")
+            self.reward_image_label.clear()  # Очистить изображение, если прогресс сбросился
 
     def update_map_with_progress(self):
         # Создаем новую карту
