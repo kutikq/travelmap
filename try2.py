@@ -92,7 +92,6 @@ class TravelApp(QMainWindow):
 
         # Слот для изображения награды
         self.reward_image_label = QLabel()
-        self.reward_image_label.setPixmap(QPixmap("reward_placeholder.png").scaled(100, 100))
         map_layout.addWidget(self.reward_image_label)
 
         # Текст челленджа
@@ -271,7 +270,7 @@ class TravelApp(QMainWindow):
             "Первопроходец: Посетите 5 мест.": "achievement_5.png",
             "Исследователь: Посетите 10 мест.": "achievement_10.png",
             "Гурман: Посетите 15 мест.": "achievement_15.png",
-            "Совершенный путник: Посетите все места!": "achievement_all.png",
+            "Совершенный путник: Посетите все места!": "achievement_20.png",
         }
 
         # Проверяем, какие достижения получены
@@ -295,12 +294,6 @@ class TravelApp(QMainWindow):
                 achievement_label = QLabel(achievement)
                 achievement_layout.addWidget(achievement_label)
 
-                # Изображение достижения
-                image_path = rewards.get(achievement, "reward_placeholder.png")
-                if os.path.exists(image_path):
-                    achievement_image = QLabel()
-                    achievement_image.setPixmap(QPixmap(image_path).scaled(50, 50))
-                    achievement_layout.addWidget(achievement_image)
 
                 self.reward_image_label.setLayout(achievement_layout)
 
@@ -330,7 +323,13 @@ class TravelApp(QMainWindow):
         else:
             ui.pictureLabelDialog.setPixmap(QPixmap("reward_placeholder.png").scaled(100, 100))
 
+        ui.dialogButton.clicked.connect(dialog.accept)
+
         dialog.exec()  # Показываем диалог
+
+    def click_ok(self):
+        self.close()
+
 
 
     def update_map_with_progress(self):

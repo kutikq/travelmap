@@ -1,6 +1,14 @@
 // leafnet.js
 document.addEventListener("DOMContentLoaded", function () {
     // Initialize map
+    var map = L.map('map', {attributionControl: false}).setView([51.505, -0.09], 13);
+    var myAttrControl = L.control.attribution().addTo(map);
+    myAttrControl.setPrefix('<a href="https://leafletjs.com/">Leaflet</a>');
+
+    const tiles = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: 'Data by &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, under <a href="https://opendatacommons.org/licenses/odbl/">ODbL.</a>'
+    }).addTo(map);
     const map = L.map("map").setView([55.7558, 37.6173], 12);
 
     // Add OpenStreetMap tiles
@@ -41,4 +49,7 @@ document.addEventListener("DOMContentLoaded", function () {
             rewardLabel.textContent = "";
         }
     }
+    
 });
+
+

@@ -22,7 +22,7 @@ class Ui_DialogAchievements(object):
         # Текст
         self.textDialog = QLabel(DialogAchievements)
         self.textDialog.setObjectName("textDialog")
-        self.textDialog.setGeometry(QRect(79, 117, 242, 16))
+        self.textDialog.setGeometry(QRect(20, 117, 400, 16))
 
         # Изображение
         self.pictureLabelDialog = QLabel(DialogAchievements)
