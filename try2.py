@@ -3,7 +3,7 @@ import os
 import sys
 from PySide6.QtWidgets import (
     QMainWindow, QWidget, QVBoxLayout, QPushButton, QApplication, QLabel, 
-    QHBoxLayout, QProgressBar, QTabWidget, QScrollArea, QFormLayout, QComboBox
+    QHBoxLayout, QProgressBar, QTabWidget, QScrollArea, QFormLayout, QComboBox, QDialog
 )
 from PySide6.QtWebEngineWidgets import QWebEngineView
 from PySide6.QtCore import QUrl
@@ -12,6 +12,7 @@ from functools import partial
 from http.server import SimpleHTTPRequestHandler, HTTPServer
 import threading
 from PySide6.QtCore import Qt
+from dialog_achievements import Ui_DialogAchievements  # Импортируйте ваш класс
 
 class TravelApp(QMainWindow):
     def __init__(self):
@@ -264,7 +265,7 @@ class TravelApp(QMainWindow):
         self.progress_label.setText(f"Прогресс: {progress:.0f}%")
         self.progress_bar.setValue(progress)
 
-        # Проверка и выдача наград
+        # Проверка достижений
         achievements = []
         rewards = {  # Список достижений и связанные изображения
             "Первопроходец: Посетите 5 мест.": "achievement_5.png",
@@ -273,6 +274,7 @@ class TravelApp(QMainWindow):
             "Совершенный путник: Посетите все места!": "achievement_all.png",
         }
 
+        # Проверяем, какие достижения получены
         if len(self.visited_places) >= 5:
             achievements.append("Первопроходец: Посетите 5 мест.")
         if len(self.visited_places) >= 10:
@@ -282,9 +284,8 @@ class TravelApp(QMainWindow):
         if len(self.visited_places) == self.total_places:
             achievements.append("Совершенный путник: Посетите все места!")
 
-        # Добавление достижений
+        # Обновляем список достижений
         self.reward_image_label.clear()  # Очистить старые изображения
-
         if achievements:
             self.reward_label.setText(f"Получено достижений: {len(achievements)}")
             for achievement in achievements:
@@ -305,18 +306,30 @@ class TravelApp(QMainWindow):
         else:
             self.reward_label.setText("Нет достижений.")
 
-        # Проверяем, достиг ли пользователь 10 посещенных мест
+        # Отображение диалога и изображения при достижении 10 мест
         if len(self.visited_places) == 10:
             self.challenge_label.setText("Поздравляем! Вы получили промокод на скидку 10% 🎉")
-
-        # Отображение PNG для достижения "Исследователь"
-        reward_image_path = rewards.get("Исследователь: Посетите 10 мест.", "reward_placeholder.png")
-        if os.path.exists(reward_image_path):
-            self.reward_image_label.setPixmap(QPixmap(reward_image_path).scaled(200, 200))  # Отобразить картинку
-            self.reward_image_label.setAlignment(Qt.AlignCenter)
+            self.show_achievement_dialog(
+                "Исследователь: Посетите 10 мест.",
+                rewards.get("Исследователь: Посетите 10 мест.", "reward_placeholder.png"),
+            )
         elif len(self.visited_places) < 10:
             self.challenge_label.setText("Челлендж: Посетите 10 мест, чтобы получить промокод!")
             self.reward_image_label.clear()  # Очистить изображение, если прогресс сбросился
+
+    def show_achievement_dialog(self, achievement_text, image_path):
+        dialog = QDialog()
+        ui = Ui_DialogAchievements()
+        ui.setupUi(dialog)
+
+        # Устанавливаем текст и изображение
+        ui.textDialog.setText(f"Вы получили достижение: {achievement_text}")
+        if os.path.exists(image_path):
+            ui.pictureLabelDialog.setPixmap(QPixmap(image_path).scaled(100, 100))
+        else:
+            ui.pictureLabelDialog.setPixmap(QPixmap("placeholder.png").scaled(100, 100))
+
+        dialog.exec()  # Показываем диалог
 
     def update_map_with_progress(self):
         # Создаем новую карту
