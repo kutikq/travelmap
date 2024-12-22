@@ -275,13 +275,13 @@ class TravelApp(QMainWindow):
         }
 
         # Проверяем, какие достижения получены
-        if len(self.visited_places) >= 5:
+        if len(self.visited_places) == 5 and "Первопроходец: Посетите 5 мест." not in achievements:
             achievements.append("Первопроходец: Посетите 5 мест.")
-        if len(self.visited_places) >= 10:
+        if len(self.visited_places) == 10 and "Исследователь: Посетите 10 мест." not in achievements:
             achievements.append("Исследователь: Посетите 10 мест.")
-        if len(self.visited_places) >= 15:
+        if len(self.visited_places) == 15 and "Гурман: Посетите 15 мест." not in achievements:
             achievements.append("Гурман: Посетите 15 мест.")
-        if len(self.visited_places) == self.total_places:
+        if len(self.visited_places) == self.total_places and "Совершенный путник: Посетите все места!" not in achievements:
             achievements.append("Совершенный путник: Посетите все места!")
 
         # Обновляем список достижений
@@ -303,19 +303,20 @@ class TravelApp(QMainWindow):
                     achievement_layout.addWidget(achievement_image)
 
                 self.reward_image_label.setLayout(achievement_layout)
+
+            # Показываем диалог только для последнего достижения
+            last_achievement = achievements[-1]
+            last_image_path = rewards.get(last_achievement, "reward_placeholder.png")
+            self.show_achievement_dialog(last_achievement, last_image_path)
         else:
             self.reward_label.setText("Нет достижений.")
 
-        # Отображение диалога и изображения при достижении 10 мест
-        if len(self.visited_places) == 10:
-            self.challenge_label.setText("Поздравляем! Вы получили промокод на скидку 10% 🎉")
-            self.show_achievement_dialog(
-                "Исследователь: Посетите 10 мест.",
-                rewards.get("Исследователь: Посетите 10 мест.", "reward_placeholder.png"),
-            )
-        elif len(self.visited_places) < 10:
+        # Дополнительный челлендж
+        if len(self.visited_places) < 10:
             self.challenge_label.setText("Челлендж: Посетите 10 мест, чтобы получить промокод!")
             self.reward_image_label.clear()  # Очистить изображение, если прогресс сбросился
+        elif len(self.visited_places) == 10:
+            self.challenge_label.setText("Поздравляем! Вы получили промокод на скидку 10% 🎉")
 
     def show_achievement_dialog(self, achievement_text, image_path):
         dialog = QDialog()
@@ -327,9 +328,10 @@ class TravelApp(QMainWindow):
         if os.path.exists(image_path):
             ui.pictureLabelDialog.setPixmap(QPixmap(image_path).scaled(100, 100))
         else:
-            ui.pictureLabelDialog.setPixmap(QPixmap("placeholder.png").scaled(100, 100))
+            ui.pictureLabelDialog.setPixmap(QPixmap("reward_placeholder.png").scaled(100, 100))
 
         dialog.exec()  # Показываем диалог
+
 
     def update_map_with_progress(self):
         # Создаем новую карту
